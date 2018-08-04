@@ -1,0 +1,6 @@
+main.o
+matrix.o
+serial_gradient_descent.o
+omp_gradient_descent.o
+utils.o
+output.exe

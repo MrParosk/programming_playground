@@ -1,0 +1,1 @@
+# Ridge regression with gradient descentImplementing ridge regression with gradient descent in C. Gradient descent has one serial implemenation and one parallel one with OpenMP. OpenMP takes approximately 3.5x less time (with 4 cores).The data is generated synthetically from data/generate_data.py.
