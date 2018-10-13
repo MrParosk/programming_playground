@@ -1,38 +1,16 @@
-from flask import render_template, url_for, flash, redirect, request
-from flaskblog import app, bcrypt, db
-from flaskblog.forms import RegisterForm, LoginForm
+from flask import render_template, url_for, flash, redirect, request, Blueprint
+from flaskblog import bcrypt, db
+from flaskblog.users.forms import RegisterForm, LoginForm
 from flaskblog.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 
-posts = [
-    {
-        "author": "Erik",
-        "title": "Blog post 1",
-        "date_posted": "2018-10-10",
-        "content": "Testing 1"
-    },
-    {
-        "author": "Palma",
-        "title": "Blog 2",
-        "date_posted": "2018-10-09",
-        "content": "test2"
-    }
-]
-
-@app.route("/")
-@app.route("/home")
-def home():
-    return render_template("home.html", posts=posts, title="Home")
-
-@app.route("/about")
-def about():
-    return render_template("about.html", title="About")
+users = Blueprint("users", __name__)
 
 
-@app.route("/register", methods=["GET", "POST"])
+@users.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for("home"))
+        return redirect(url_for("main.home"))
 
     form = RegisterForm()
 
@@ -45,14 +23,15 @@ def register():
         db.session.commit()
 
         flash(f"Your account has been created! You can now login", "success")
-        return redirect(url_for("login"))
+        return redirect(url_for("users.login"))
 
     return render_template("register.html", form=form, title="Register")
 
-@app.route("/login", methods=["GET", "POST"])
+
+@users.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("home"))
+        return redirect(url_for("main.home"))
 
     form=LoginForm()
     if form.validate_on_submit():
@@ -64,19 +43,21 @@ def login():
             if next_page:
                 redirect(next_page)
             else:
-                return redirect(url_for("home"))
+                return redirect(url_for("main.home"))
                 
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
 
     return render_template("login.html", form=form, title="Login")
 
-@app.route("/logout")
+
+@users.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for("home"))
+    return redirect(url_for("main.home"))
 
-@app.route("/account")
+
+@users.route("/account")
 @login_required
 def account():
     image_file = url_for("static", filename="profile_pics/" + current_user.image_file)
