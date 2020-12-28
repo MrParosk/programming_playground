@@ -29,7 +29,7 @@ public:
 
     T &operator()(const uint32_t row_idx, const uint32_t col_idx)
     {
-        return this->data[row_idx + col_idx * this->rows];
+        return this->data[row_idx + col_idx * rows];
     }
 
     Matrix<T> operator=(Matrix<T> &other)
@@ -55,9 +55,9 @@ public:
             return false;
         }
 
-        for (uint32_t i = 0; i < this->rows; i++)
+        for (uint32_t j = 0; j < this->cols; j++)
         {
-            for (uint32_t j = 0; j < this->cols; j++)
+            for (uint32_t i = 0; i < this->rows; i++)
             {
                 if (fabs((*this)(i, j) - other(i, j)) > 1e-6)
                 {
@@ -78,9 +78,9 @@ public:
 
         Matrix<T> return_matrix(this->rows, this->cols);
 
-        for (uint32_t i = 0; i < this->rows; i++)
+        for (uint32_t j = 0; j < this->cols; j++)
         {
-            for (uint32_t j = 0; j < this->cols; j++)
+            for (uint32_t i = 0; i < this->rows; i++)
             {
                 return_matrix(i, j) = (*this)(i, j) + other(i, j);
             }
@@ -98,9 +98,9 @@ public:
 
         Matrix<T> return_matrix(this->rows, this->cols);
 
-        for (uint32_t i = 0; i < this->rows; i++)
+        for (uint32_t j = 0; j < this->cols; j++)
         {
-            for (uint32_t j = 0; j < this->cols; j++)
+            for (uint32_t i = 0; i < this->rows; i++)
             {
                 return_matrix(i, j) = (*this)(i, j) - other(i, j);
             }
@@ -123,7 +123,7 @@ public:
             for (uint32_t j = 0; j < other.cols; ++j)
             {
                 T temp_sum = 0;
-                for (uint32_t k = 0; k < this->cols; k++)
+                for (uint32_t k = 0; k < cols; k++)
                 {
                     temp_sum += (*this)(i, k) * other(k, j);
                 }
@@ -138,9 +138,9 @@ public:
     {
         Matrix<T> return_matrix(rows, cols);
 
-        for (uint32_t i = 0; i < rows; ++i)
+        for (uint32_t j = 0; j < cols; ++j)
         {
-            for (uint32_t j = 0; j < cols; ++j)
+            for (uint32_t i = 0; i < rows; ++i)
             {
                 return_matrix(i, j) = (*this)(i, j) * scalar;
             }
@@ -166,11 +166,11 @@ public:
     T sum()
     {
         T sum_value = (T)0.0;
-        for (uint32_t i = 0; i < rows; ++i)
+        for (uint32_t j = 0; j < cols; ++j)
         {
-            for (uint32_t j = 0; j < cols; ++j)
+            for (uint32_t i = 0; i < rows; ++i)
             {
-                sum_value += (*this)(j, i);
+                sum_value += (*this)(i, j);
             }
         }
         return sum_value;
