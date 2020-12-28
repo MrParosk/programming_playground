@@ -130,7 +130,7 @@ void test_softmax()
 
 void test_one_layer()
 {
-    const uint32_t num_samples = 10;
+    const uint32_t num_samples = 1000;
     const uint32_t num_features = 50;
     const uint32_t num_units = 100;
     const uint32_t num_classes = 3;

@@ -9,23 +9,15 @@ class Matrix
 {
 public:
     std::vector<T> data;
-    uint32_t cols;
     uint32_t rows;
+    uint32_t cols;
 
-    Matrix()
-    {
-        rows = 0;
-        cols = 0;
-        data = std::vector<T>();
-        data.reserve(0);
-    }
+    Matrix() : Matrix(0, 0) {}
 
-    Matrix(const uint32_t num_rows, const uint32_t num_cols)
+    Matrix(const uint32_t num_rows, const uint32_t num_cols) : data(num_rows * num_cols, T(0.0))
     {
         rows = num_rows;
         cols = num_cols;
-        uint32_t num_elements = num_rows * num_cols;
-        data = std::vector<T>(num_elements, (T)0.0);
     }
 
     ~Matrix()
