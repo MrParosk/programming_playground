@@ -34,7 +34,7 @@ void exponential(Matrix<T> &m)
 }
 
 template <class T>
-Matrix<T> softmax(Matrix<T> &m)
+Matrix<T> softmax(const Matrix<T> &m)
 {
     auto P = m;
     exponential(P);
@@ -49,4 +49,33 @@ Matrix<T> softmax(Matrix<T> &m)
     }
 
     return P;
+}
+
+template <class T>
+void log(Matrix<T> &m)
+{
+    for (uint32_t i = 0; i < m.rows; ++i)
+    {
+        for (uint32_t j = 0; j < m.cols; ++j)
+        {
+            m(i, j) = log(m(i, j));
+        }
+    }
+}
+
+template <class T>
+Matrix<T> relu(Matrix<T> &m)
+{
+    auto return_matrix = m;
+    for (uint32_t i = 0; i < return_matrix.rows; i++)
+    {
+        for (uint32_t j = 0; j < return_matrix.cols; j++)
+        {
+            if (return_matrix(i, j) < 0)
+            {
+                return_matrix(i, j) = (T)0.0;
+            }
+        }
+    }
+    return return_matrix;
 }

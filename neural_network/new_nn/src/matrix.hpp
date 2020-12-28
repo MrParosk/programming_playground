@@ -167,6 +167,11 @@ public:
         }
     }
 
+    void print_shape()
+    {
+        std::cout << rows << ", " << cols << std::endl;
+    }
+
     Matrix<T> sum_over_cols()
     {
         Matrix<T> S(rows, 1);
