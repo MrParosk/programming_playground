@@ -79,3 +79,12 @@ Matrix<T> relu(Matrix<T> &m)
     }
     return return_matrix;
 }
+
+template <class T>
+T cross_entropy(Matrix<T> &P, Matrix<T> &Y)
+{
+    log(P);
+    auto ce = Y.transpose() * P;
+    auto loss = ce * ((T)-1.0);
+    return loss.sum();
+}

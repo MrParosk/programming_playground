@@ -40,7 +40,7 @@ public:
         return this->data[row_idx + col_idx * this->rows];
     }
 
-    Matrix operator=(Matrix &other)
+    Matrix<T> operator=(Matrix<T> &other)
     {
         rows = other.rows;
         cols = other.cols;
@@ -56,7 +56,7 @@ public:
         return *this;
     }
 
-    bool operator==(Matrix &other)
+    bool operator==(Matrix<T> &other)
     {
         if (this->rows != other.rows || this->cols != other.cols)
         {
@@ -77,14 +77,14 @@ public:
         return true;
     }
 
-    Matrix operator+(Matrix &other)
+    Matrix<T> operator+(Matrix<T> &other)
     {
         if (this->rows != other.rows || this->cols != other.cols)
         {
             throw std::runtime_error("Shapes incorrect in operator+");
         }
 
-        Matrix return_matrix(this->rows, this->cols);
+        Matrix<T> return_matrix(this->rows, this->cols);
 
         for (uint32_t i = 0; i < this->rows; i++)
         {
@@ -97,14 +97,14 @@ public:
         return return_matrix;
     }
 
-    Matrix operator-(Matrix &other)
+    Matrix<T> operator-(Matrix<T> &other)
     {
         if (this->rows != other.rows || this->cols != other.cols)
         {
             throw std::runtime_error("Shapes incorrect in operator-");
         }
 
-        Matrix return_matrix(this->rows, this->cols);
+        Matrix<T> return_matrix(this->rows, this->cols);
 
         for (uint32_t i = 0; i < this->rows; i++)
         {
@@ -117,14 +117,14 @@ public:
         return return_matrix;
     }
 
-    Matrix operator*(Matrix &other)
+    Matrix<T> operator*(Matrix<T> &other)
     {
         if (this->cols != other.rows)
         {
             throw std::runtime_error("Shapes incorrect in operator*");
         }
 
-        Matrix return_matrix(this->rows, other.cols);
+        Matrix<T> return_matrix(this->rows, other.cols);
 
         for (uint32_t i = 0; i < this->rows; ++i)
         {
@@ -140,6 +140,68 @@ public:
         }
 
         return return_matrix;
+    }
+
+    Matrix<T> operator*(T scalar)
+    {
+        Matrix<T> return_matrix(rows, cols);
+
+        for (uint32_t i = 0; i < rows; ++i)
+        {
+            for (uint32_t j = 0; j < cols; ++j)
+            {
+                return_matrix(i, j) = (*this)(i, j) * scalar;
+            }
+        }
+
+        return return_matrix;
+    }
+
+    Matrix<T>
+    transpose()
+    {
+        Matrix<T> return_matrix(cols, rows);
+        for (uint32_t i = 0; i < rows; ++i)
+        {
+            for (uint32_t j = 0; j < cols; ++j)
+            {
+                return_matrix(j, i) = (*this)(i, j);
+            }
+        }
+
+        return return_matrix;
+    }
+
+    T sum()
+    {
+        T sum_value = (T)0.0;
+        for (uint32_t i = 0; i < rows; ++i)
+        {
+            for (uint32_t j = 0; j < cols; ++j)
+            {
+                sum_value += (*this)(j, i);
+            }
+        }
+        return sum_value;
+    }
+
+    Matrix<T> sum_over_cols()
+    {
+        Matrix<T> S(rows, 1);
+
+        for (uint32_t i = 0; i < rows; ++i)
+        {
+            T temp_sum = (T)0.0;
+
+            for (uint32_t j = 0; j < cols; ++j)
+            {
+                temp_sum += (*this)(i, j);
+            }
+
+            S(i, 0) = temp_sum;
+        }
+
+        return S;
     }
 
     void fill_vector(std::vector<T> input_data)
@@ -170,24 +232,5 @@ public:
     void print_shape()
     {
         std::cout << rows << ", " << cols << std::endl;
-    }
-
-    Matrix<T> sum_over_cols()
-    {
-        Matrix<T> S(rows, 1);
-
-        for (uint32_t i = 0; i < rows; ++i)
-        {
-            T temp_sum = (T)0.0;
-
-            for (uint32_t j = 0; j < cols; ++j)
-            {
-                temp_sum += (*this)(i, j);
-            }
-
-            S(i, 0) = temp_sum;
-        }
-
-        return S;
     }
 };
