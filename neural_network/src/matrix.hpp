@@ -50,14 +50,14 @@ public:
 
     bool operator==(Matrix<T> &other)
     {
-        if (this->rows != other.rows || this->cols != other.cols)
+        if (rows != other.rows || cols != other.cols)
         {
             return false;
         }
 
-        for (uint32_t j = 0; j < this->cols; j++)
+        for (uint32_t j = 0; j < cols; j++)
         {
-            for (uint32_t i = 0; i < this->rows; i++)
+            for (uint32_t i = 0; i < rows; i++)
             {
                 if (fabs((*this)(i, j) - other(i, j)) > 1e-6)
                 {
@@ -71,16 +71,16 @@ public:
 
     Matrix<T> operator+(Matrix<T> &other)
     {
-        if (this->rows != other.rows || this->cols != other.cols)
+        if (rows != other.rows || cols != other.cols)
         {
             throw std::runtime_error("Shapes incorrect in operator+");
         }
 
-        Matrix<T> return_matrix(this->rows, this->cols);
+        Matrix<T> return_matrix(rows, cols);
 
-        for (uint32_t j = 0; j < this->cols; j++)
+        for (uint32_t j = 0; j < cols; j++)
         {
-            for (uint32_t i = 0; i < this->rows; i++)
+            for (uint32_t i = 0; i < rows; i++)
             {
                 return_matrix(i, j) = (*this)(i, j) + other(i, j);
             }
@@ -91,16 +91,16 @@ public:
 
     Matrix<T> operator-(Matrix<T> &other)
     {
-        if (this->rows != other.rows || this->cols != other.cols)
+        if (rows != other.rows || cols != other.cols)
         {
             throw std::runtime_error("Shapes incorrect in operator-");
         }
 
-        Matrix<T> return_matrix(this->rows, this->cols);
+        Matrix<T> return_matrix(rows, cols);
 
-        for (uint32_t j = 0; j < this->cols; j++)
+        for (uint32_t j = 0; j < cols; j++)
         {
-            for (uint32_t i = 0; i < this->rows; i++)
+            for (uint32_t i = 0; i < rows; i++)
             {
                 return_matrix(i, j) = (*this)(i, j) - other(i, j);
             }
@@ -109,16 +109,31 @@ public:
         return return_matrix;
     }
 
+    Matrix<T> operator-(T scalar)
+    {
+        Matrix<T> return_matrix(rows, cols);
+
+        for (uint32_t j = 0; j < cols; j++)
+        {
+            for (uint32_t i = 0; i < rows; i++)
+            {
+                return_matrix(i, j) = (*this)(i, j) - scalar;
+            }
+        }
+
+        return return_matrix;
+    }
+
     Matrix<T> operator*(Matrix<T> &other)
     {
-        if (this->cols != other.rows)
+        if (cols != other.rows)
         {
             throw std::runtime_error("Shapes incorrect in operator*");
         }
 
-        Matrix<T> return_matrix(this->rows, other.cols);
+        Matrix<T> return_matrix(rows, other.cols);
 
-        for (uint32_t i = 0; i < this->rows; ++i)
+        for (uint32_t i = 0; i < rows; ++i)
         {
             for (uint32_t j = 0; j < other.cols; ++j)
             {
@@ -143,6 +158,26 @@ public:
             for (uint32_t i = 0; i < rows; ++i)
             {
                 return_matrix(i, j) = (*this)(i, j) * scalar;
+            }
+        }
+
+        return return_matrix;
+    }
+
+    Matrix<T> operator/(Matrix<T> &other)
+    {
+        if (cols != other.cols || rows != other.rows)
+        {
+            throw std::runtime_error("Shapes incorrect in operator/");
+        }
+
+        Matrix<T> return_matrix(rows, cols);
+
+        for (uint32_t i = 0; i < rows; ++i)
+        {
+            for (uint32_t j = 0; j < cols; ++j)
+            {
+                return_matrix(i, j) = (*this)(i, j) / other(i, j);
             }
         }
 
@@ -197,15 +232,30 @@ public:
 
     void fill_vector(std::vector<T> input_data)
     {
-        if (input_data.size() != data.size())
+        if (input_data.size() != (rows * cols))
         {
             throw std::runtime_error("fill_vector got an vector of different size than the matrix one");
         }
 
-        for (uint32_t i = 0; i < data.size(); i++)
+        for (uint32_t i = 0; i < rows * cols; i++)
         {
             data[i] = input_data[i];
         }
+    }
+
+    Matrix<T> copy()
+    {
+        Matrix<T> return_matrix(rows, cols);
+
+        for (uint32_t j = 0; j < this->cols; j++)
+        {
+            for (uint32_t i = 0; i < this->rows; i++)
+            {
+                return_matrix(i, j) = (*this)(i, j);
+            }
+        }
+
+        return return_matrix;
     }
 
     void print_matrix()

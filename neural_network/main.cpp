@@ -1,6 +1,7 @@
 #include "src/matrix.hpp"
 #include "src/utils.hpp"
 #include "src/one_layer_nn.hpp"
+#include "src/ops.hpp"
 #include <math.h>
 #include <cassert>
 
@@ -57,6 +58,19 @@ void test_multiply_scalar()
 
     auto C = A * 2.0;
     assert(B == C);
+}
+
+void test_divide_operators()
+{
+    Matrix<float> A(2, 2);
+    A.fill_vector(std::vector<float>({2.0, 4.0, 6.0, 8.0}));
+
+    Matrix<float> B(2, 2);
+    B.fill_vector(std::vector<float>({2.0, 2.0, 2.0, 2.0}));
+
+    Matrix<float> C(2, 2);
+    C.fill_vector(std::vector<float>({1.0, 2.0, 3.0, 4.0}));
+    assert(A / B == C);
 }
 
 void test_equals()
@@ -128,6 +142,23 @@ void test_softmax()
     assert(B == C);
 }
 
+void test_cross_entropy()
+{
+    const uint32_t num_samples = 1000;
+    const uint32_t num_classes = 3;
+
+    Matrix<float> Y(num_samples, num_classes);
+    fill_random(Y, 0, 1.0);
+
+    Matrix<float> Y_hat(num_samples, num_classes);
+    fill_random(Y, 0, 1.0);
+
+    CrossEntropy<float> ce;
+    auto loss = ce.forward(Y_hat, Y);
+
+    auto backwards = ce.backward(Y_hat, Y);
+}
+
 void test_one_layer()
 {
     const uint32_t num_samples = 1000;
@@ -144,23 +175,28 @@ void test_one_layer()
     fill_random(Y, 0, 1.0);
 
     auto P = model.forward(X);
-
-    auto loss = cross_entropy(P, Y);
 }
 
-int main()
+void run_tests()
 {
     test_plus_minus_operators();
     test_different_types();
     test_multiply_operators();
     test_multiply_scalar();
+    test_divide_operators();
     test_equals();
     test_transpose();
     test_sum();
     test_sum_over_cols();
     test_exp();
     test_softmax();
+    test_cross_entropy();
     test_one_layer();
+    std::cout << "all tests passed" << std::endl;
+}
 
+int main()
+{
+    run_tests();
     return 0;
 }

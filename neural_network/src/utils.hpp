@@ -22,11 +22,11 @@ void fill_random(Matrix<T> &m, const int seed_num, const float dev)
 }
 
 template <class T>
-void exponential(Matrix<T> &m)
+constexpr void exponential(Matrix<T> &m)
 {
-    for (uint32_t i = 0; i < m.rows; ++i)
+    for (uint32_t j = 0; j < m.cols; ++j)
     {
-        for (uint32_t j = 0; j < m.cols; ++j)
+        for (uint32_t i = 0; i < m.rows; ++i)
         {
             m(i, j) = exp(m(i, j));
         }
@@ -34,15 +34,15 @@ void exponential(Matrix<T> &m)
 }
 
 template <class T>
-Matrix<T> softmax(const Matrix<T> &m)
+constexpr Matrix<T> softmax(const Matrix<T> &m)
 {
     auto P = m;
     exponential(P);
     auto S = P.sum_over_cols();
 
-    for (uint32_t i = 0; i < P.rows; ++i)
+    for (uint32_t j = 0; j < P.cols; ++j)
     {
-        for (uint32_t j = 0; j < P.cols; ++j)
+        for (uint32_t i = 0; i < P.rows; ++i)
         {
             P(i, j) = P(i, j) / S(i, 0);
         }
@@ -52,11 +52,11 @@ Matrix<T> softmax(const Matrix<T> &m)
 }
 
 template <class T>
-void log(Matrix<T> &m)
+constexpr void log(Matrix<T> &m)
 {
-    for (uint32_t i = 0; i < m.rows; ++i)
+    for (uint32_t j = 0; j < m.cols; ++j)
     {
-        for (uint32_t j = 0; j < m.cols; ++j)
+        for (uint32_t i = 0; i < m.rows; ++i)
         {
             m(i, j) = log(m(i, j));
         }
@@ -64,12 +64,12 @@ void log(Matrix<T> &m)
 }
 
 template <class T>
-Matrix<T> relu(Matrix<T> &m)
+constexpr Matrix<T> relu(Matrix<T> &m)
 {
     auto return_matrix = m;
-    for (uint32_t i = 0; i < return_matrix.rows; i++)
+    for (uint32_t j = 0; j < return_matrix.cols; j++)
     {
-        for (uint32_t j = 0; j < return_matrix.cols; j++)
+        for (uint32_t i = 0; i < return_matrix.rows; i++)
         {
             if (return_matrix(i, j) < 0)
             {
@@ -78,13 +78,4 @@ Matrix<T> relu(Matrix<T> &m)
         }
     }
     return return_matrix;
-}
-
-template <class T>
-T cross_entropy(Matrix<T> &P, Matrix<T> &Y)
-{
-    log(P);
-    auto ce = Y.transpose() * P;
-    auto loss = ce * ((T)-1.0);
-    return loss.sum();
 }
