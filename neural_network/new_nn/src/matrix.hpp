@@ -157,8 +157,7 @@ public:
         return return_matrix;
     }
 
-    Matrix<T>
-    transpose()
+    Matrix<T> transpose()
     {
         Matrix<T> return_matrix(cols, rows);
         for (uint32_t i = 0; i < rows; ++i)
