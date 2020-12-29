@@ -29,10 +29,16 @@ public:
 
     T &operator()(const uint32_t row_idx, const uint32_t col_idx)
     {
+        // used for setting the value, set method
         return this->data[row_idx + col_idx * rows];
     }
 
-    Matrix<T> operator=(Matrix<T> &other)
+    T get(const uint32_t row_idx, const uint32_t col_idx) const
+    {
+        return data[row_idx + col_idx * rows];
+    }
+
+    Matrix<T> operator=(const Matrix<T> &other)
     {
         rows = other.rows;
         cols = other.cols;
@@ -42,13 +48,16 @@ public:
 
         for (uint32_t i = 0; i < rows * cols; i++)
         {
-            data[i] = other.data[i];
+            for (uint32_t j = 0; j < cols; j++)
+            {
+                (*this)(i, j) = other.get(i, j);
+            }
         }
 
         return *this;
     }
 
-    bool operator==(Matrix<T> &other)
+    bool operator==(const Matrix<T> &other) const
     {
         if (rows != other.rows || cols != other.cols)
         {
@@ -59,7 +68,7 @@ public:
         {
             for (uint32_t i = 0; i < rows; i++)
             {
-                if (fabs((*this)(i, j) - other(i, j)) > 1e-6)
+                if (fabs(get(i, j) - other.get(i, j)) > 1e-6)
                 {
                     return false;
                 }
@@ -69,7 +78,7 @@ public:
         return true;
     }
 
-    Matrix<T> operator+(Matrix<T> &other)
+    Matrix<T> operator+(const Matrix<T> &other) const
     {
         if (rows != other.rows || cols != other.cols)
         {
@@ -82,14 +91,14 @@ public:
         {
             for (uint32_t i = 0; i < rows; i++)
             {
-                return_matrix(i, j) = (*this)(i, j) + other(i, j);
+                return_matrix(i, j) = get(i, j) + other.get(i, j);
             }
         }
 
         return return_matrix;
     }
 
-    Matrix<T> operator-(Matrix<T> &other)
+    Matrix<T> operator-(const Matrix<T> &other) const
     {
         if (rows != other.rows || cols != other.cols)
         {
@@ -102,14 +111,14 @@ public:
         {
             for (uint32_t i = 0; i < rows; i++)
             {
-                return_matrix(i, j) = (*this)(i, j) - other(i, j);
+                return_matrix(i, j) = get(i, j) - other.get(i, j);
             }
         }
 
         return return_matrix;
     }
 
-    Matrix<T> operator-(T scalar)
+    Matrix<T> operator-(const T scalar) const
     {
         Matrix<T> return_matrix(rows, cols);
 
@@ -117,14 +126,14 @@ public:
         {
             for (uint32_t i = 0; i < rows; i++)
             {
-                return_matrix(i, j) = (*this)(i, j) - scalar;
+                return_matrix(i, j) = get(i, j) - scalar;
             }
         }
 
         return return_matrix;
     }
 
-    Matrix<T> operator*(Matrix<T> &other)
+    Matrix<T> operator*(const Matrix<T> &other) const
     {
         if (cols != other.rows)
         {
@@ -133,14 +142,14 @@ public:
 
         Matrix<T> return_matrix(rows, other.cols);
 
-        for (uint32_t i = 0; i < rows; ++i)
+        for (uint32_t i = 0; i < rows; i++)
         {
-            for (uint32_t j = 0; j < other.cols; ++j)
+            for (uint32_t j = 0; j < other.cols; j++)
             {
                 T temp_sum = 0;
                 for (uint32_t k = 0; k < cols; k++)
                 {
-                    temp_sum += (*this)(i, k) * other(k, j);
+                    temp_sum += get(i, k) * other.get(k, j);
                 }
                 return_matrix(i, j) = temp_sum;
             }
@@ -149,22 +158,22 @@ public:
         return return_matrix;
     }
 
-    Matrix<T> operator*(T scalar)
+    Matrix<T> operator*(const T scalar) const
     {
         Matrix<T> return_matrix(rows, cols);
 
-        for (uint32_t j = 0; j < cols; ++j)
+        for (uint32_t j = 0; j < cols; j++)
         {
-            for (uint32_t i = 0; i < rows; ++i)
+            for (uint32_t i = 0; i < rows; i++)
             {
-                return_matrix(i, j) = (*this)(i, j) * scalar;
+                return_matrix(i, j) = get(i, j) * scalar;
             }
         }
 
         return return_matrix;
     }
 
-    Matrix<T> operator/(Matrix<T> &other)
+    Matrix<T> operator/(const Matrix<T> &other) const
     {
         if (cols != other.cols || rows != other.rows)
         {
@@ -173,55 +182,55 @@ public:
 
         Matrix<T> return_matrix(rows, cols);
 
-        for (uint32_t i = 0; i < rows; ++i)
+        for (uint32_t j = 0; j < cols; j++)
         {
-            for (uint32_t j = 0; j < cols; ++j)
+            for (uint32_t i = 0; i < rows; i++)
             {
-                return_matrix(i, j) = (*this)(i, j) / other(i, j);
+                return_matrix(i, j) = get(i, j) / other.get(i, j);
             }
         }
 
         return return_matrix;
     }
 
-    Matrix<T> transpose()
+    Matrix<T> transpose() const
     {
         Matrix<T> return_matrix(cols, rows);
-        for (uint32_t i = 0; i < rows; ++i)
+        for (uint32_t i = 0; i < rows; i++)
         {
-            for (uint32_t j = 0; j < cols; ++j)
+            for (uint32_t j = 0; j < cols; j++)
             {
-                return_matrix(j, i) = (*this)(i, j);
+                return_matrix(j, i) = get(i, j);
             }
         }
 
         return return_matrix;
     }
 
-    T sum()
+    T sum() const
     {
         T sum_value = (T)0.0;
-        for (uint32_t j = 0; j < cols; ++j)
+        for (uint32_t j = 0; j < cols; j++)
         {
-            for (uint32_t i = 0; i < rows; ++i)
+            for (uint32_t i = 0; i < rows; i++)
             {
-                sum_value += (*this)(i, j);
+                sum_value += get(i, j);
             }
         }
         return sum_value;
     }
 
-    Matrix<T> sum_over_cols()
+    Matrix<T> sum_over_cols() const
     {
         Matrix<T> S(rows, 1);
 
-        for (uint32_t i = 0; i < rows; ++i)
+        for (uint32_t i = 0; i < rows; i++)
         {
             T temp_sum = (T)0.0;
 
-            for (uint32_t j = 0; j < cols; ++j)
+            for (uint32_t j = 0; j < cols; j++)
             {
-                temp_sum += (*this)(i, j);
+                temp_sum += get(i, j);
             }
 
             S(i, 0) = temp_sum;
@@ -230,7 +239,7 @@ public:
         return S;
     }
 
-    void fill_vector(std::vector<T> input_data)
+    void fill_vector(const std::vector<T> input_data)
     {
         if (input_data.size() != (rows * cols))
         {
@@ -243,34 +252,34 @@ public:
         }
     }
 
-    Matrix<T> copy()
+    Matrix<T> copy() const
     {
         Matrix<T> return_matrix(rows, cols);
 
-        for (uint32_t j = 0; j < this->cols; j++)
+        for (uint32_t j = 0; j < cols; j++)
         {
-            for (uint32_t i = 0; i < this->rows; i++)
+            for (uint32_t i = 0; i < rows; i++)
             {
-                return_matrix(i, j) = (*this)(i, j);
+                return_matrix(i, j) = get(i, j);
             }
         }
 
         return return_matrix;
     }
 
-    void print_matrix()
+    void print_matrix() const
     {
-        for (uint32_t i = 0; i < rows; ++i)
+        for (uint32_t i = 0; i < rows; i++)
         {
-            for (uint32_t j = 0; j < cols; ++j)
+            for (uint32_t j = 0; j < cols; j++)
             {
-                std::cout << (*this)(i, j) << " ";
+                std::cout << get(i, j) << " ";
             }
             std::cout << std::endl;
         }
     }
 
-    void print_shape()
+    void print_shape() const
     {
         std::cout << rows << ", " << cols << std::endl;
     }

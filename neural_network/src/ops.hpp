@@ -11,7 +11,7 @@ public:
     }
     virtual void backward()
     {
-        throw "forward is not implemented yet";
+        throw "backward is not implemented yet";
     }
 };
 
@@ -25,14 +25,11 @@ public:
     {
         auto Y_hat_temp = Y_hat.copy();
         log(Y_hat_temp);
-        auto ce = Y.transpose() * Y_hat_temp;
-        auto loss = ce * ((T)-1.0);
-        return loss.sum();
+        return ((Y.transpose() * Y_hat_temp) * ((T)-1.0)).sum();
     }
 
     Matrix<T> backward(Matrix<T> &Y_hat, Matrix<T> &Y)
     {
-        // TODO: add this
-        return Y_hat;
+        return (Y / Y_hat - ((Y - 1) / (Y_hat - 1))) * -(T)1.0;
     }
 };
