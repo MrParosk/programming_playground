@@ -13,7 +13,7 @@ void fill_random(Matrix<T> &m, const int seed_num, const float dev)
 
     std::vector<T> data;
     data.reserve(m.rows * m.cols);
-    for (uint32_t i = 0; i < m.rows * m.cols; ++i)
+    for (uint32_t i = 0; i < m.rows * m.cols; i++)
     {
         data.push_back(dev * generator(seed));
     }
@@ -22,27 +22,28 @@ void fill_random(Matrix<T> &m, const int seed_num, const float dev)
 }
 
 template <class T>
-constexpr void exponential(Matrix<T> &m)
+constexpr Matrix<T> exponential(const Matrix<T> &m)
 {
-    for (uint32_t j = 0; j < m.cols; ++j)
+    auto return_matrix = m;
+    for (uint32_t j = 0; j < m.cols; j++)
     {
-        for (uint32_t i = 0; i < m.rows; ++i)
+        for (uint32_t i = 0; i < m.rows; i++)
         {
-            m(i, j) = exp(m(i, j));
+            return_matrix(i, j) = exp(return_matrix.get(i, j));
         }
     }
+    return return_matrix;
 }
 
 template <class T>
 constexpr Matrix<T> softmax(const Matrix<T> &m)
 {
-    auto P = m;
-    exponential(P);
+    auto P = exponential(m);
     auto S = P.sum_over_cols();
 
-    for (uint32_t j = 0; j < P.cols; ++j)
+    for (uint32_t j = 0; j < P.cols; j++)
     {
-        for (uint32_t i = 0; i < P.rows; ++i)
+        for (uint32_t i = 0; i < P.rows; i++)
         {
             P(i, j) = P(i, j) / S(i, 0);
         }
@@ -52,29 +53,14 @@ constexpr Matrix<T> softmax(const Matrix<T> &m)
 }
 
 template <class T>
-constexpr void log(Matrix<T> &m)
-{
-    for (uint32_t j = 0; j < m.cols; ++j)
-    {
-        for (uint32_t i = 0; i < m.rows; ++i)
-        {
-            m(i, j) = log(m(i, j));
-        }
-    }
-}
-
-template <class T>
-constexpr Matrix<T> relu(Matrix<T> &m)
+constexpr Matrix<T> log(const Matrix<T> &m)
 {
     auto return_matrix = m;
-    for (uint32_t j = 0; j < return_matrix.cols; j++)
+    for (uint32_t j = 0; j < m.cols; j++)
     {
-        for (uint32_t i = 0; i < return_matrix.rows; i++)
+        for (uint32_t i = 0; i < m.rows; i++)
         {
-            if (return_matrix(i, j) < 0)
-            {
-                return_matrix(i, j) = (T)0.0;
-            }
+            return_matrix(i, j) = log(return_matrix.get(i, j));
         }
     }
     return return_matrix;

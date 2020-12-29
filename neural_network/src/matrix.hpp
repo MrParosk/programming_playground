@@ -5,9 +5,8 @@
 #include <cstdint>
 
 template <class T>
-class Matrix
+struct Matrix
 {
-public:
     std::vector<T> data;
     uint32_t rows;
     uint32_t cols;

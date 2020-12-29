@@ -2,12 +2,13 @@
 #include <cassert>
 #include "matrix.hpp"
 #include "utils.hpp"
+#include "ops.hpp"
 
-class OneLayer
+struct OneLayer
 {
-public:
     Matrix<float> W1;
     Matrix<float> W2;
+    Relu<float> act;
 
     OneLayer(const uint32_t num_features, const uint32_t num_units, const uint32_t num_classes, const int seed, const float dev) : W1(num_features, num_units), W2(num_units, num_classes)
     {
@@ -19,7 +20,7 @@ public:
     {
         auto h = X * W1;
 
-        auto a = relu<float>(h);
+        auto a = act.forward(h);
         auto s = a * W2;
         auto P = softmax(s);
         return P;

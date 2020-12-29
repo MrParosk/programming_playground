@@ -120,12 +120,11 @@ void test_exp()
 {
     Matrix<float> A(2, 2);
     A.fill_vector(std::vector<float>({1.0, 2.0, 3.0, 4.0}));
-    exponential(A);
 
     Matrix<float> B(2, 2);
     B.fill_vector(std::vector<float>({exp(1.0f), exp(2.0f), exp(3.0f), exp(4.0f)}));
 
-    assert(A == B);
+    assert(exponential(A) == B);
 }
 
 void test_softmax()
