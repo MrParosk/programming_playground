@@ -129,9 +129,11 @@ void test_exp()
 
 void test_softmax()
 {
+
+    SoftmaxCrossEntropy<float> sm;
     Matrix<float> A(2, 2);
     A.fill_vector(std::vector<float>({1.0, 9.0, 3.0, 4.0}));
-    auto B = softmax(A);
+    auto B = sm.forward_softmax(A);
 
     Matrix<float> C(2, 2);
     C.fill_vector(std::vector<float>({exp(1.0f) / (exp(1.0f) + exp(3.0f)),
@@ -152,10 +154,9 @@ void test_cross_entropy()
     Matrix<float> Y_hat(num_samples, num_classes);
     fill_random(Y, 0, 1.0);
 
-    CrossEntropy<float> ce;
-    auto loss = ce.forward(Y_hat, Y);
-
-    auto backwards = ce.backward(Y_hat, Y);
+    SoftmaxCrossEntropy<float> ce;
+    auto loss = ce.forward_cross_entropy(Y_hat, Y);
+    auto backward = ce.backward(Y_hat, Y);
 }
 
 void test_one_layer()
@@ -173,7 +174,7 @@ void test_one_layer()
     Matrix<float> Y(num_samples, num_classes);
     fill_random(Y, 0, 1.0);
 
-    auto P = model.forward(X);
+    auto P = model.forward(X, Y);
 }
 
 void run_tests()

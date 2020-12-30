@@ -36,23 +36,6 @@ constexpr Matrix<T> exponential(const Matrix<T> &m)
 }
 
 template <class T>
-constexpr Matrix<T> softmax(const Matrix<T> &m)
-{
-    auto P = exponential(m);
-    auto S = P.sum_over_cols();
-
-    for (uint32_t j = 0; j < P.cols; j++)
-    {
-        for (uint32_t i = 0; i < P.rows; i++)
-        {
-            P(i, j) = P(i, j) / S(i, 0);
-        }
-    }
-
-    return P;
-}
-
-template <class T>
 constexpr Matrix<T> log(const Matrix<T> &m)
 {
     auto return_matrix = m;
