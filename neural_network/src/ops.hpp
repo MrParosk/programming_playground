@@ -95,7 +95,7 @@ struct SoftmaxCrossEntropy
         {
             for (uint32_t i = 0; i < Y_hat.rows; i++)
             {
-                Y_hat(i, j) = Y_hat(i, j) / S(i, 0);
+                Y_hat(i, j) = Y_hat.get(i, j) / S.get(i, 0);
             }
         }
 
@@ -104,6 +104,6 @@ struct SoftmaxCrossEntropy
 
     Matrix<T> backward(const Matrix<T> &Y_hat, const Matrix<T> &Y) const
     {
-        return (Y - Y_hat) * -1.0f;
+        return Y_hat - Y;
     }
 };

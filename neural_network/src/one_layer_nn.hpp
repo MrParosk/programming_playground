@@ -19,15 +19,14 @@ struct OneLayer
         learning_rate = lr;
     }
 
-    float forward(Matrix<float> &X, Matrix<float> &Y)
+    Matrix<float> forward(Matrix<float> &X)
     {
         auto h1 = L1.forward(X);
         auto a1 = act.forward(h1);
         auto h2 = L2.forward(a1);
 
         auto Y_hat = loss_fct.forward_softmax(h2);
-        auto loss = loss_fct.forward_cross_entropy(Y_hat, Y);
-        return loss;
+        return Y_hat;
     }
 
     float step(Matrix<float> &X, Matrix<float> &Y)
@@ -52,6 +51,6 @@ struct OneLayer
         L2.sgd_update(dLdW2, learning_rate);
         L1.sgd_update(dLdW1, learning_rate);
 
-        return loss;
+        return loss / X.rows;
     }
 };

@@ -195,7 +195,7 @@ struct Matrix
         return return_matrix;
     }
 
-    Matrix<T> dot(const Matrix<T> &other)
+    Matrix<T> dot(const Matrix<T> &other) const
     {
         if (rows != other.rows || cols != other.cols)
         {

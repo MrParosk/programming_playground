@@ -51,14 +51,34 @@ constexpr Matrix<T> log(const Matrix<T> &m, T eps = 1e-8f)
 }
 
 template <class T>
-std::tuple<Matrix<T>, Matrix<T>> generate_data(std::vector<std::vector<T>> center_means,
+constexpr float accuracy(const Matrix<T> &Y, const Matrix<T> &Y_hat)
+{
+    float num_correct = 0.0f;
+
+    for (uint32_t i = 0; i < Y.rows; i++)
+    {
+        for (uint32_t j = 0; j < Y.cols; j++)
+        {
+            if (fabs(Y.get(i, j) - Y_hat.get(i, j)) < (T)1e-6)
+            {
+                num_correct++;
+            }
+        }
+    }
+
+    return num_correct / ((float)Y.rows);
+}
+
+template <class T>
+std::tuple<Matrix<T>, Matrix<T>> generate_data(const std::vector<std::vector<T>> &center_means,
                                                const uint32_t num_samples_per_class, const uint32_t num_features, const uint32_t num_classes,
-                                               const T dev = 0.01, const uint32_t seed_num = 0)
+                                               const T dev = 0.1, const uint32_t seed_num = 0)
 {
     std::default_random_engine seed(seed_num);
     std::normal_distribution<T> generator(0, 1); // Sample from zero mean and unit variance
 
-    Matrix<T> X(num_classes * num_samples_per_class, num_features);
+    // first col of X is the bias term
+    Matrix<T> X(num_classes * num_samples_per_class, num_features + 1);
     Matrix<T> Y(num_classes * num_samples_per_class, num_classes);
 
     for (uint32_t c = 0; c < num_classes; c++)
@@ -74,7 +94,8 @@ std::tuple<Matrix<T>, Matrix<T>> generate_data(std::vector<std::vector<T>> cente
         for (uint32_t i = 0; i < num_samples_per_class; i++)
         {
             Y(offset + i, c) = (T)1.0;
-            for (uint32_t j = 0; j < num_features; j++)
+            X(offset + i, 0) = (T)1.0;
+            for (uint32_t j = 1; j < num_features; j++)
             {
                 X(offset + i, j) = dev * generator(seed) + center[j];
             }

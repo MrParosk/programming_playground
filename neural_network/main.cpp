@@ -201,7 +201,7 @@ void run_tests()
 
 void run_training()
 {
-    const float learning_rate = 0.001f;
+    const float learning_rate = 0.01f;
     const uint32_t num_samples_per_class = 200;
     const uint32_t num_features = 2;
     const uint32_t num_units = 10;
@@ -212,13 +212,17 @@ void run_training()
     Matrix<float> X, Y;
     std::tie(X, Y) = generate_data<float>(center_means, num_samples_per_class, num_features, num_classes);
 
-    OneLayer model(learning_rate, num_features, num_units, num_classes);
+    // One column for the bias term
+    OneLayer model(learning_rate, num_features + 1, num_units, num_classes);
 
     for (uint32_t i = 0; i < 100; i++)
     {
         auto loss = model.step(X, Y);
         std::cout << loss << std::endl;
     }
+
+    auto Y_hat = model.forward(X);
+    std::cout << accuracy(Y, Y_hat) << std::endl;
 }
 
 int main()
