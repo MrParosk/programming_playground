@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <cstdint>
+#include <memory>
 
 template <class T>
 struct Matrix
@@ -29,23 +30,30 @@ struct Matrix
     T &operator()(const uint32_t row_idx, const uint32_t col_idx)
     {
         // used for setting the value, set method
-        return this->data[row_idx + col_idx * rows];
+        if (row_idx >= rows && col_idx >= cols)
+        {
+            throw std::runtime_error("out of range of operator()");
+        }
+        return data[row_idx + col_idx * rows];
     }
 
     T get(const uint32_t row_idx, const uint32_t col_idx) const
     {
+        if (row_idx >= rows && col_idx >= cols)
+        {
+            throw std::runtime_error("out of range of get");
+        }
+
         return data[row_idx + col_idx * rows];
     }
 
-    Matrix<T> operator=(const Matrix<T> &other)
+    Matrix<T> &operator=(const Matrix<T> &other)
     {
         rows = other.rows;
         cols = other.cols;
-
-        data.resize(0);
         data.resize(rows * cols);
 
-        for (uint32_t i = 0; i < rows * cols; i++)
+        for (uint32_t i = 0; i < rows; i++)
         {
             for (uint32_t j = 0; j < cols; j++)
             {
@@ -91,6 +99,21 @@ struct Matrix
             for (uint32_t i = 0; i < rows; i++)
             {
                 return_matrix(i, j) = get(i, j) + other.get(i, j);
+            }
+        }
+
+        return return_matrix;
+    }
+
+    Matrix<T> operator+(const T scalar) const
+    {
+        Matrix<T> return_matrix(rows, cols);
+
+        for (uint32_t j = 0; j < cols; j++)
+        {
+            for (uint32_t i = 0; i < rows; i++)
+            {
+                return_matrix(i, j) = get(i, j) + scalar;
             }
         }
 

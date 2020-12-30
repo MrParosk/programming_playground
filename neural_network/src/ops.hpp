@@ -17,9 +17,15 @@ struct Linear
         return a * W;
     }
 
-    Matrix<T> backward(const Matrix<T> &a) const
+    Matrix<T> backward() const
     {
         return W;
+    }
+
+    Matrix<T> backward_last_term(const Matrix<T> &a) const
+    {
+        // When the linear layer is the last term (i.e. dhdW) the derivate is w.r.t. the weights
+        return a.transpose();
     }
 
     void sgd_update(const Matrix<T> &dLdW, const T learning_rate)
