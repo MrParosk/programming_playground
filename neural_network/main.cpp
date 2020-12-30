@@ -149,10 +149,10 @@ void test_cross_entropy()
     const uint32_t num_classes = 3;
 
     Matrix<float> Y(num_samples, num_classes);
-    fill_random(Y, 0, 1.0);
+    fill_random(Y, 0, 1.0f);
 
     Matrix<float> Y_hat(num_samples, num_classes);
-    fill_random(Y, 0, 1.0);
+    fill_random(Y, 0, 1.0f);
 
     SoftmaxCrossEntropy<float> ce;
 
@@ -168,13 +168,13 @@ void test_one_layer()
     const uint32_t num_units = 100;
     const uint32_t num_classes = 3;
 
-    OneLayer model(num_features, num_units, num_classes, 0, 1.0);
+    OneLayer model(num_features, num_units, num_classes, 0, 1.0f);
 
     Matrix<float> X(num_samples, num_features);
-    fill_random(X, 0, 1.0);
+    fill_random(X, 0, 0.1f);
 
     Matrix<float> Y(num_samples, num_classes);
-    fill_random(Y, 0, 1.0);
+    fill_random(Y, 0, 1.0f);
     SoftmaxCrossEntropy<float> ce;
     Y = ce.forward_softmax(Y);
     model.step(X, Y);

@@ -33,17 +33,14 @@ struct OneLayer
 
         float lr = 0.1f;
 
+        // forward-pass
         auto h1 = L1.forward(X);
         auto a1 = act.forward(h1);
         auto h2 = L2.forward(a1);
-
         auto Y_hat = loss_fct.forward_softmax(h2);
 
-        Y_hat.print_matrix();
-        auto loss = loss_fct.forward_cross_entropy(Y_hat, Y);
-
+        // backward
         auto dLdh2 = loss_fct.backward(Y_hat, Y);
-
         auto dLdW2 = L2.backward_last_term(a1) * dLdh2;
 
         auto dh2da1 = L2.backward();
@@ -54,6 +51,7 @@ struct OneLayer
         L2.sgd_update(dLdW2, lr);
         // L2.sgd_update(dLdW1, lr);
 
+        auto loss = loss_fct.forward_cross_entropy(Y_hat, Y);
         std::cout << loss << std::endl;
     }
 };
