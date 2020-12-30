@@ -30,7 +30,7 @@ struct Matrix
     T &operator()(const uint32_t row_idx, const uint32_t col_idx)
     {
         // used for setting the value, set method
-        if (row_idx >= rows && col_idx >= cols)
+        if (row_idx >= rows || col_idx >= cols)
         {
             throw std::runtime_error("out of range of operator()");
         }
@@ -39,7 +39,7 @@ struct Matrix
 
     T get(const uint32_t row_idx, const uint32_t col_idx) const
     {
-        if (row_idx >= rows && col_idx >= cols)
+        if (row_idx >= rows || col_idx >= cols)
         {
             throw std::runtime_error("out of range of get");
         }
@@ -189,6 +189,26 @@ struct Matrix
             for (uint32_t i = 0; i < rows; i++)
             {
                 return_matrix(i, j) = get(i, j) * scalar;
+            }
+        }
+
+        return return_matrix;
+    }
+
+    Matrix<T> dot(const Matrix<T> &other)
+    {
+        if (rows != other.rows || cols != other.cols)
+        {
+            throw std::runtime_error("Shape incorrect in dot");
+        }
+
+        Matrix<T> return_matrix(rows, cols);
+
+        for (uint32_t j = 0; j < cols; j++)
+        {
+            for (uint32_t i = 0; i < rows; i++)
+            {
+                return_matrix(i, j) = get(i, j) * other.get(i, j);
             }
         }
 

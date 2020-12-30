@@ -7,14 +7,16 @@
 
 struct OneLayer
 {
+    float learning_rate;
     Linear<float> L1;
     Linear<float> L2;
     Relu<float> act;
     SoftmaxCrossEntropy<float> loss_fct;
 
-    OneLayer(const uint32_t num_features, const uint32_t num_units, const uint32_t num_classes, const int seed, const float dev)
+    OneLayer(const float lr, const uint32_t num_features, const uint32_t num_units, const uint32_t num_classes, const int seed = 0, const float dev = 0.01f)
         : L1(num_features, num_units, seed, dev), L2(num_units, num_classes, seed, dev)
     {
+        learning_rate = lr;
     }
 
     float forward(Matrix<float> &X, Matrix<float> &Y)
@@ -28,16 +30,14 @@ struct OneLayer
         return loss;
     }
 
-    void step(Matrix<float> &X, Matrix<float> &Y)
+    float step(Matrix<float> &X, Matrix<float> &Y)
     {
-
-        float lr = 0.1f;
-
         // forward-pass
         auto h1 = L1.forward(X);
         auto a1 = act.forward(h1);
         auto h2 = L2.forward(a1);
         auto Y_hat = loss_fct.forward_softmax(h2);
+        auto loss = loss_fct.forward_cross_entropy(Y_hat, Y);
 
         // backward
         auto dLdh2 = loss_fct.backward(Y_hat, Y);
@@ -46,12 +46,12 @@ struct OneLayer
         auto dh2da1 = L2.backward();
         auto da1dh1 = act.backward(h1);
         auto dh1dW1 = L1.backward_last_term(X);
-        //auto dLdW1 = dLdh2 * dh2da1 * da1dh1 * dh1dW1;
+        auto dLdW1 = dh1dW1 * (da1dh1.dot(dLdh2 * dh2da1));
 
-        L2.sgd_update(dLdW2, lr);
-        // L2.sgd_update(dLdW1, lr);
+        // Optimizer step
+        L2.sgd_update(dLdW2, learning_rate);
+        L1.sgd_update(dLdW1, learning_rate);
 
-        auto loss = loss_fct.forward_cross_entropy(Y_hat, Y);
-        std::cout << loss << std::endl;
+        return loss;
     }
 };

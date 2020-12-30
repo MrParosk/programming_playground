@@ -19,7 +19,7 @@ struct Linear
 
     Matrix<T> backward() const
     {
-        return W;
+        return W.transpose();
     }
 
     Matrix<T> backward_last_term(const Matrix<T> &a) const
@@ -104,6 +104,6 @@ struct SoftmaxCrossEntropy
 
     Matrix<T> backward(const Matrix<T> &Y_hat, const Matrix<T> &Y) const
     {
-        return Y - Y_hat;
+        return (Y - Y_hat) * -1.0f;
     }
 };

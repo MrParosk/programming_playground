@@ -129,7 +129,6 @@ void test_exp()
 
 void test_softmax()
 {
-
     SoftmaxCrossEntropy<float> sm;
     Matrix<float> A(2, 2);
     A.fill_vector(std::vector<float>({1.0, 9.0, 3.0, 4.0}));
@@ -163,20 +162,22 @@ void test_cross_entropy()
 
 void test_one_layer()
 {
+    const float learning_rate = 0.1f;
     const uint32_t num_samples = 1000;
     const uint32_t num_features = 50;
     const uint32_t num_units = 100;
     const uint32_t num_classes = 3;
 
-    OneLayer model(num_features, num_units, num_classes, 0, 1.0f);
+    OneLayer model(learning_rate, num_features, num_units, num_classes);
 
     Matrix<float> X(num_samples, num_features);
     fill_random(X, 0, 0.1f);
 
     Matrix<float> Y(num_samples, num_classes);
-    fill_random(Y, 0, 1.0f);
+    fill_random(Y, 0, 0.1f);
     SoftmaxCrossEntropy<float> ce;
     Y = ce.forward_softmax(Y);
+
     model.step(X, Y);
 }
 
@@ -198,8 +199,31 @@ void run_tests()
     std::cout << "all tests passed" << std::endl;
 }
 
+void run_training()
+{
+    const float learning_rate = 0.001f;
+    const uint32_t num_samples_per_class = 200;
+    const uint32_t num_features = 2;
+    const uint32_t num_units = 10;
+    const uint32_t num_classes = 2;
+
+    std::vector<std::vector<float>> center_means({{10.0, 10.0}, {-1.0, -1.0}});
+
+    Matrix<float> X, Y;
+    std::tie(X, Y) = generate_data<float>(center_means, num_samples_per_class, num_features, num_classes);
+
+    OneLayer model(learning_rate, num_features, num_units, num_classes);
+
+    for (uint32_t i = 0; i < 100; i++)
+    {
+        auto loss = model.step(X, Y);
+        std::cout << loss << std::endl;
+    }
+}
+
 int main()
 {
     run_tests();
+    run_training();
     return 0;
 }
