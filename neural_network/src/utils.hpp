@@ -53,16 +53,26 @@ constexpr Matrix<T> log(const Matrix<T> &m, T eps = 1e-8f)
 template <class T>
 constexpr float accuracy(const Matrix<T> &Y, const Matrix<T> &Y_hat)
 {
+    const T tol = (T)1e-6;
     float num_correct = 0.0f;
 
     for (uint32_t i = 0; i < Y.rows; i++)
     {
+        T max_val = (T)-1.0;
+        uint32_t max_idx = 0;
+
         for (uint32_t j = 0; j < Y.cols; j++)
         {
-            if (fabs(Y.get(i, j) - Y_hat.get(i, j)) < (T)1e-6)
+            if (Y_hat.get(i, j) > max_val)
             {
-                num_correct++;
+                max_val = Y_hat.get(i, j);
+                max_idx = j;
             }
+        }
+
+        if (fabs(Y.get(i, max_idx) - (T)1.0) < tol)
+        {
+            num_correct++;
         }
     }
 

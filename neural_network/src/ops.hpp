@@ -13,7 +13,6 @@ struct Linear
 
     Matrix<T> forward(const Matrix<T> &a) const
     {
-
         return a * W;
     }
 
@@ -83,7 +82,7 @@ struct SoftmaxCrossEntropy
 
     T forward_cross_entropy(const Matrix<T> &Y_hat, const Matrix<T> &Y) const
     {
-        return ((Y.transpose() * log(Y_hat)) * ((T)-1.0)).sum();
+        return -1.0 * ((Y.transpose() * log(Y_hat)).sum());
     }
 
     Matrix<T> forward_softmax(const Matrix<T> &h) const

@@ -5,15 +5,16 @@
 #include "utils.hpp"
 #include "ops.hpp"
 
+template <class T>
 struct OneLayer
 {
     float learning_rate;
-    Linear<float> L1;
-    Linear<float> L2;
-    Relu<float> act;
-    SoftmaxCrossEntropy<float> loss_fct;
+    Linear<T> L1;
+    Linear<T> L2;
+    Relu<T> act;
+    SoftmaxCrossEntropy<T> loss_fct;
 
-    OneLayer(const float lr, const uint32_t num_features, const uint32_t num_units, const uint32_t num_classes, const int seed = 0, const float dev = 0.01f)
+    OneLayer(const T lr, const uint32_t num_features, const uint32_t num_units, const uint32_t num_classes, const int seed = 0, const T dev = 0.01f)
         : L1(num_features, num_units, seed, dev), L2(num_units, num_classes, seed, dev)
     {
         learning_rate = lr;
@@ -29,7 +30,7 @@ struct OneLayer
         return Y_hat;
     }
 
-    float step(Matrix<float> &X, Matrix<float> &Y)
+    float step(Matrix<T> &X, Matrix<T> &Y)
     {
         // forward-pass
         auto h1 = L1.forward(X);

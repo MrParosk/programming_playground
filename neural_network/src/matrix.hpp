@@ -1,9 +1,9 @@
 #pragma once
-#include <math.h>
 #include <iostream>
 #include <vector>
 #include <cstdint>
 #include <memory>
+#include <math.h>
 
 template <class T>
 struct Matrix
@@ -34,6 +34,7 @@ struct Matrix
         {
             throw std::runtime_error("out of range of operator()");
         }
+
         return data[row_idx + col_idx * rows];
     }
 
@@ -75,7 +76,7 @@ struct Matrix
         {
             for (uint32_t i = 0; i < rows; i++)
             {
-                if (fabs(get(i, j) - other.get(i, j)) > 1e-6)
+                if (fabs(get(i, j) - other.get(i, j)) > (T)1e-6)
                 {
                     return false;
                 }
@@ -281,7 +282,7 @@ struct Matrix
         return S;
     }
 
-    void fill_vector(const std::vector<T> input_data)
+    void fill_vector(const std::vector<T> &input_data)
     {
         if (input_data.size() != (rows * cols))
         {
